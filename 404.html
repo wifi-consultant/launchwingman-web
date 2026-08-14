@@ -25,7 +25,7 @@
   <div class="foot">
     <p class="sub">YOUR NETWORK ASSISTANT</p>
     <p class="status" id="status">Wingman is coming soon.</p>
-    <a class="btn" id="dl" href="#" style="display:none">Download Wingman</a>
+    <a class="btn" id="dl" href="#" download style="display:none">Download Wingman for Windows here</a>
     <p class="muted" id="ver"></p>
   </div>
 <script>
@@ -123,10 +123,10 @@
   var statusEl=document.getElementById('status'), dl=document.getElementById('dl'), verEl=document.getElementById('ver');
   fetch(MANIFEST,{cache:'no-store'}).then(function(r){return r.json();}).then(function(m){
     if(m && m.installerUrl){
-      dl.href=m.installerUrl; dl.style.display='inline-block';
-      verEl.textContent='Version '+(m.version||'')+(m.date?' · '+m.date:'');
+      dl.href=m.installerUrl; dl.style.display='inline-block'; statusEl.style.display='none';
+      verEl.textContent='Latest version '+(m.version||'')+(m.date?' · '+m.date:'');
       statusEl.textContent='Your download will begin automatically… if it does not, use the button below.';
-      try{ window.location.href=m.installerUrl; }catch(e){}
+      
     } else { statusEl.textContent='Wingman is coming soon.'; }
   }).catch(function(){ statusEl.textContent='Could not reach the download server — please try again shortly.'; });
 })();
