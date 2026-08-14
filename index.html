@@ -95,7 +95,7 @@
       for(var k=0;k<p.cells.length;k++){ drawBlock(p.x+p.cells[k][0]*p.s, p.y+p.cells[k][1]*p.s, p.s, p.color, p.a); }
       if(p.y>H+4*p.s){ ambient[i]=newAmbient(false); }
     }
-    var g=Math.max(0.14, cell*0.018), vmax=Math.max(2.4,cell*0.42), all=true;
+    var g=Math.max(0.09, cell*0.011), vmax=Math.max(1.6,cell*0.30), all=true;
     for(var j=0;j<blocks.length;j++){ var b=blocks[j];
       if(state==='form'){ if(!b.placed){ b.vy+=g; if(b.vy>vmax)b.vy=vmax; b.y+=b.vy; if(b.y>=b.ty){ b.y=b.ty; b.vy=0; b.placed=true; } else all=false; } }
       else if(state==='clear'){ b.vy+=g; if(b.vy>vmax*1.8)b.vy=vmax*1.8; b.y+=b.vy; }
