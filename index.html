@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Wingman — Your Network Assistant</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body { margin:0; min-height:100vh; display:flex; align-items:center; justify-content:center;
+         background:#0f1117; color:#e6e8ee; font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif; }
+  .card { text-align:center; padding:40px; max-width:520px; }
+  .logo { width:72px; height:72px; border-radius:16px; margin:0 auto 20px; display:flex;
+          align-items:center; justify-content:center; font-size:34px; font-weight:800; color:#fff;
+          background:linear-gradient(135deg,#7c3aed,#4c1d95); }
+  h1 { font-size:22px; margin:0 0 6px; }
+  .sub { color:#9aa0ad; font-size:14px; margin:0 0 28px; }
+  .status { font-size:14px; color:#c7ccd6; min-height:22px; margin-bottom:20px; }
+  .btn { display:inline-block; padding:12px 22px; border-radius:10px; color:#fff; text-decoration:none;
+         font-weight:600; font-size:14px; background:linear-gradient(135deg,#7c3aed,#4c1d95); }
+  .muted { color:#6b7280; font-size:12px; margin-top:22px; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">W</div>
+    <h1>Wingman</h1>
+    <p class="sub">Your Network Assistant</p>
+    <p class="status" id="status">Preparing your download&hellip;</p>
+    <a class="btn" id="dl" href="#" style="display:none">Download Wingman</a>
+    <p class="muted" id="ver"></p>
+    <p class="muted">Windows installer &middot; provided as-is.</p>
+  </div>
+  <script>
+    var MANIFEST = 'https://software.launchwingman.com/latest.json';
+    var statusEl = document.getElementById('status');
+    var dl = document.getElementById('dl');
+    var verEl = document.getElementById('ver');
+    fetch(MANIFEST, { cache: 'no-store' })
+      .then(function (r) { return r.json(); })
+      .then(function (m) {
+        if (m && m.installerUrl) {
+          dl.href = m.installerUrl;
+          dl.style.display = 'inline-block';
+          verEl.textContent = 'Version ' + (m.version || '') + (m.date ? ' · ' + m.date : '');
+          statusEl.textContent = 'Your download will begin automatically… if it does not, use the button below.';
+          try { window.location.href = m.installerUrl; } catch (e) {}
+        } else {
+          statusEl.textContent = 'Wingman is coming soon.';
+        }
+      })
+      .catch(function () {
+        statusEl.textContent = 'Could not reach the download server — please try again shortly.';
+      });
+  </script>
+</body>
+</html>
