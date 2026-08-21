@@ -123,10 +123,12 @@
   var statusEl=document.getElementById('status'), dl=document.getElementById('dl'), verEl=document.getElementById('ver');
   fetch(MANIFEST,{cache:'no-store'}).then(function(r){return r.json();}).then(function(m){
     if(m && m.installerUrl){
-      dl.href=m.installerUrl; dl.style.display='inline-block'; statusEl.style.display='none';
+      dl.href=m.installerUrl; dl.style.display='inline-block'; statusEl.style.display='';
       verEl.textContent='Latest version '+(m.version||'')+(m.date?' · '+m.date:'');
       statusEl.textContent='Your download will begin automatically… if it does not, use the button below.';
-      
+      // Auto-start the download. The installer is served with Content-Disposition: attachment, so navigating to it
+      // downloads the file and leaves this page in place; the button above stays as the manual fallback.
+      setTimeout(function(){ window.location.href=m.installerUrl; }, 700);
     } else { statusEl.textContent='Wingman is coming soon.'; }
   }).catch(function(){ statusEl.textContent='Could not reach the download server — please try again shortly.'; });
 })();
