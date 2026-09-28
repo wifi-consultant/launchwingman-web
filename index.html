@@ -125,10 +125,10 @@
     if(m && m.installerUrl){
       dl.href=m.installerUrl; dl.style.display='inline-block'; statusEl.style.display='';
       verEl.textContent='Latest version '+(m.version||'')+(m.date?' · '+m.date:'');
-      statusEl.textContent='Your download will begin automatically… if it does not, use the button below.';
-      // Auto-start the download. The installer is served with Content-Disposition: attachment, so navigating to it
-      // downloads the file and leaves this page in place; the button above stays as the manual fallback.
-      setTimeout(function(){ window.location.href=m.installerUrl; }, 700);
+      statusEl.textContent='Click the button below to download Wingman for Windows.';
+      // BUTTON-ONLY BY DESIGN: the download must start ONLY when the visitor clicks the button — NEVER automatically.
+      // Do NOT re-add an auto-navigate / setTimeout(window.location.href=...) here; simply visiting the page must not
+      // trigger a download. The <a id="dl" download href=installerUrl> button (set above) is the only download path.
     } else { statusEl.textContent='Wingman is coming soon.'; }
   }).catch(function(){ statusEl.textContent='Could not reach the download server — please try again shortly.'; });
 })();
