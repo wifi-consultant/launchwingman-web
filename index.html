@@ -1,137 +1,281 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>Wingman — Your Network Assistant</title>
+<meta name="description" content="Download Wingman — the AI network assistant. For Windows, and for the WingmanOne handheld on the Waveshare PocketTerm35." />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Manrope:wght@400;500;600;700&display=swap" />
 <style>
-  :root { color-scheme: light; }
-  * { box-sizing: border-box; }
-  html, body { height:100%; }
-  body { margin:0; background:#ffffff; color:#0b0c10; overflow:hidden;
-         font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif; }
-  #bg { position:fixed; inset:0; z-index:0; display:block; }
-  .foot { position:fixed; left:0; right:0; bottom:25%; z-index:1; text-align:center; padding:0 20px; }
-  .sub { color:#6d28d9; font-size:14px; letter-spacing:.16em; margin:0 0 12px; }
-  .status { color:#4b5563; font-size:14px; min-height:20px; margin:0 0 16px; }
-  .btn { display:inline-block; padding:12px 24px; border-radius:10px; color:#fff; text-decoration:none;
-         font-weight:600; font-size:14px; background:linear-gradient(135deg,#7c3aed,#4c1d95);
-         box-shadow:0 6px 20px rgba(124,58,237,.35); }
-  .muted { color:#6b7280; font-size:12px; margin-top:14px; }
+  /* Layout: split hero — LEFT = animated tetris wordmark + short headline + two download cards; RIGHT = PocketTerm35. White, brand purple. */
+  :root{
+    --bg:#f7f7fb; --surface:#ffffff; --surface-2:#f3f2f9; --border:#e9e7f1;
+    --ink:#161522; --muted:#6b687e; --faint:#a3a1b4;
+    --accent:#7c3aed; --accent-2:#3b6bff; --accent-3:#22c1e6; --ring: rgba(124,58,237,.16);
+    --font-display:'Sora',system-ui,sans-serif; --font-body:'Manrope',system-ui,sans-serif;
+    color-scheme:light;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-body);
+       -webkit-font-smoothing:antialiased;line-height:1.5}
+  .wrap{max-width:1180px;margin:0 auto;padding-inline:22px;padding-block:clamp(24px,5vw,60px);min-height:100%}
+
+  .top{display:flex;align-items:center;gap:16px;margin-bottom:clamp(14px,2.5vw,26px)}
+  .brand{display:flex;align-items:center;gap:10px;font-family:var(--font-display);font-weight:700}
+  .wmark{width:26px;height:26px;border-radius:7px;background:#fff;border:1px solid var(--border);
+         display:grid;place-items:center;overflow:hidden}
+  .wmark svg{display:block}
+
+  .hero{display:grid;grid-template-columns:1fr 1fr;gap:clamp(28px,6vw,64px);align-items:start}
+  @media (max-width:900px){.hero{grid-template-columns:1fr;gap:34px}}
+
+  .left{min-width:0;align-self:start}
+  #wordmark{width:100%;max-width:440px;height:auto;display:block;margin-bottom:16px}
+  .eyebrow{font-family:var(--font-display);font-weight:600;font-size:11.5px;letter-spacing:.32em;
+           text-transform:uppercase;color:var(--accent);margin:0 0 26px}
+  h1{font-family:var(--font-display);font-weight:700;letter-spacing:-.015em;
+     font-size:clamp(23px,3vw,30px);line-height:1.16;margin:0 0 30px;display:flex;flex-direction:column}
+  h1 .l2{padding-left:2.6em}
+  @media (max-width:420px){h1 .l2{padding-left:1.4em}}
+  h1 .grad{background:linear-gradient(100deg,var(--accent),var(--accent-2));-webkit-background-clip:text;
+           background-clip:text;color:transparent}
+
+  .cards{display:flex;flex-direction:column;gap:14px}
+  .card{position:relative;display:flex;align-items:center;gap:16px;background:var(--surface);
+        border:1px solid var(--border);border-radius:16px;padding:18px 18px}
+  .card.rec{border-color:color-mix(in oklab,var(--accent) 42%,var(--border));box-shadow:0 0 0 3px var(--ring)}
+  .ribbon{position:absolute;top:-10px;left:18px;background:var(--accent);color:#fff;
+        font:700 10px/1 var(--font-display);letter-spacing:.09em;text-transform:uppercase;
+        padding:5px 9px;border-radius:999px;display:none}
+  .card.rec .ribbon{display:inline-block}
+  .icon{width:52px;height:52px;flex:0 0 auto;border-radius:13px;display:grid;place-items:center;background:var(--surface-2)}
+  .icon svg{height:34px;width:auto}
+  .cbody{min-width:0;flex:1}
+  .cbody h3{font-family:var(--font-display);font-weight:700;font-size:15.5px;margin:0 0 3px;
+            display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .cbody p{margin:0;color:var(--muted);font-size:13px}
+  .tagnew{font:700 9.5px/1 var(--font-display);letter-spacing:.1em;text-transform:uppercase;color:var(--accent-3);
+        border:1px solid color-mix(in oklab,var(--accent-3) 40%,var(--border));border-radius:999px;padding:3px 7px}
+  .go{flex:0 0 auto}
+  .btn{display:inline-flex;align-items:center;gap:8px;border:0;cursor:pointer;text-decoration:none;
+       font:700 13px/1 var(--font-display);border-radius:11px;padding:12px 15px;white-space:nowrap}
+  .btn.primary{background:linear-gradient(100deg,var(--accent),var(--accent-2));color:#fff}
+  .btn.ghost{background:var(--surface-2);color:var(--ink);border:1px solid var(--border)}
+  .btn:hover{filter:brightness(1.05)}
+  .btn svg{width:15px;height:15px}
+  @media (max-width:520px){.card{flex-wrap:wrap}.go{width:100%}.btn{width:100%;justify-content:center}}
+
+  .pt35 .body{fill:color-mix(in oklab,var(--accent) 10%,transparent);stroke:var(--accent);stroke-width:1.3}
+  .pt35 .screen{fill:var(--surface);stroke:var(--accent);stroke-width:1}
+  .pt35 .keys rect{fill:var(--accent)}
+
+  .stage{position:relative;display:flex;justify-content:center;align-items:flex-start}
+  .device{height:clamp(300px,42vw,450px);width:auto;opacity:.95}
+  @media (max-width:900px){.stage{justify-content:flex-start}}
+  .device .body{fill:var(--surface);stroke:var(--border);stroke-width:2}
+  .device .keys rect{fill:var(--faint);opacity:.55}
+
+  .foot{margin-top:40px;color:var(--faint);font-size:12px;display:flex;gap:16px;flex-wrap:wrap;align-items:center}
+  .foot a{color:var(--muted);text-decoration:none}.foot a:hover{color:var(--ink)}
+
+  @media (prefers-reduced-motion:no-preference){
+    .card{animation:rise .5s cubic-bezier(.2,.7,.2,1) both}
+    .card:nth-child(2){animation-delay:.06s}
+  }
+  @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 </style>
 </head>
 <body>
-  <canvas id="bg"></canvas>
-  <div class="foot">
-    <p class="sub">YOUR NETWORK ASSISTANT</p>
-    <p class="status" id="status">Wingman is coming soon.</p>
-    <a class="btn" id="dl" href="#" download style="display:none">Download Wingman for Windows here</a>
-    <p class="muted" id="ver"></p>
+<div class="wrap">
+  <div class="top">
+    <div class="brand"><span class="wmark" id="wmark"></span> Wingman</div>
   </div>
-<script>
-(function(){
-  var canvas=document.getElementById('bg'), ctx=canvas.getContext('2d');
-  var W=0,H=0,cell=0,blocks=[],ambient=[],state='form',holdUntil=0;
-  var COLORS=['#3b6bff','#3b6bff','#3b6bff','#5468ff','#6d5efc','#7c3aed','#8b5cf6','#22c1e6','#3fd07a'];
-  var FONT={
-    W:['10001','10001','10101','11011','10001'],
-    I:['11111','00100','00100','00100','11111'],
-    N:['10001','11001','10101','10011','10001'],
-    G:['01110','10000','10011','10001','01110'],
-    M:['10001','11011','10101','10001','10001'],
-    A:['01110','10001','11111','10001','10001']
-  };
-  var WORD='WINGMAN';
-  var SHAPES=[
-    [[0,0],[1,0],[0,1],[1,1]],
-    [[0,0],[1,0],[2,0],[3,0]],
-    [[0,0],[1,0],[2,0],[1,1]],
-    [[1,0],[2,0],[0,1],[1,1]],
-    [[0,0],[1,0],[1,1],[2,1]],
-    [[0,0],[0,1],[1,1],[2,1]],
-    [[2,0],[0,1],[1,1],[2,1]]
-  ];
-  function pick(a){ return a[Math.floor(Math.random()*a.length)]; }
 
-  function newAmbient(spread){
-    var s=cell*(0.5+Math.random()*0.4);
-    return { cells:pick(SHAPES), x:Math.random()*W, y:spread?Math.random()*H:-4*s,
-             vy:0.4+Math.random()*0.8, s:s, color:pick(COLORS), a:0.05+Math.random()*0.07 };
-  }
-  function resetFall(){
-    for(var i=0;i<blocks.length;i++){ var b=blocks[i]; b.x=b.tx; b.y=-cell-Math.random()*H*1.2; b.vy=0; b.placed=false; }
-  }
-  function layout(){
-    var glyphs=WORD.split('').map(function(c){return FONT[c];});
-    var cols=0; glyphs.forEach(function(g){cols+=g[0].length+1;}); cols-=1;
-    var rows=5;
-    cell=Math.floor(Math.min((W*0.86)/cols,(H*0.42)/rows)); cell=Math.max(7,cell);
-    var wordW=cols*cell, wordH=rows*cell;
-    var ox=(W-wordW)/2, oy=H*0.40-wordH/2;
-    blocks=[]; var cx=0;
-    glyphs.forEach(function(g){
-      var gw=g[0].length;
-      for(var r=0;r<rows;r++){ for(var c=0;c<gw;c++){ if(g[r].charAt(c)==='1'){
-        blocks.push({tx:ox+(cx+c)*cell, ty:oy+r*cell, x:0, y:0, vy:0, placed:false, color:pick(COLORS)});
-      }}}
-      cx+=gw+1;
-    });
-    resetFall();
-    ambient=[]; var n=Math.max(6,Math.floor(W/220));
-    for(var i=0;i<n;i++) ambient.push(newAmbient(true));
-    state='form';
-  }
-  function drawBlock(x,y,s,color,alpha){
-    var g=Math.max(1,s*0.06);
-    ctx.globalAlpha=alpha; ctx.fillStyle=color; ctx.fillRect(x+g,y+g,s-2*g,s-2*g);
-    var bh=Math.max(2,s*0.16);
-    ctx.fillStyle='rgba(255,255,255,0.28)'; ctx.fillRect(x+g,y+g,s-2*g,bh);
-    ctx.fillStyle='rgba(0,0,0,0.30)'; ctx.fillRect(x+g,y+s-g-bh,s-2*g,bh);
-    ctx.globalAlpha=1;
-  }
-  function frame(){
-    ctx.clearRect(0,0,W,H);
-    for(var i=0;i<ambient.length;i++){ var p=ambient[i]; p.y+=p.vy;
-      for(var k=0;k<p.cells.length;k++){ drawBlock(p.x+p.cells[k][0]*p.s, p.y+p.cells[k][1]*p.s, p.s, p.color, p.a); }
-      if(p.y>H+4*p.s){ ambient[i]=newAmbient(false); }
-    }
-    var g=Math.max(0.09, cell*0.011), vmax=Math.max(1.6,cell*0.30), all=true;
-    for(var j=0;j<blocks.length;j++){ var b=blocks[j];
-      if(state==='form'){ if(!b.placed){ b.vy+=g; if(b.vy>vmax)b.vy=vmax; b.y+=b.vy; if(b.y>=b.ty){ b.y=b.ty; b.vy=0; b.placed=true; } else all=false; } }
-      else if(state==='clear'){ b.vy+=g; if(b.vy>vmax*1.8)b.vy=vmax*1.8; b.y+=b.vy; }
-      drawBlock(b.x,b.y,cell,b.color,1);
-    }
-    var now=performance.now();
-    if(state==='form' && all){ state='hold'; holdUntil=now+3800; }
-    else if(state==='hold' && now>holdUntil){ state='clear'; }
-    else if(state==='clear'){ var gone=true;
-      for(var m=0;m<blocks.length;m++){ if(blocks[m].y<H+cell){ gone=false; break; } }
-      if(gone){ resetFall(); state='form'; }
-    }
-    requestAnimationFrame(frame);
-  }
-  function resize(){
-    W=window.innerWidth; H=window.innerHeight; var dpr=window.devicePixelRatio||1;
-    canvas.width=Math.floor(W*dpr); canvas.height=Math.floor(H*dpr);
-    canvas.style.width=W+'px'; canvas.style.height=H+'px';
-    ctx.setTransform(dpr,0,0,dpr,0,0); layout();
-  }
-  window.addEventListener('resize', resize); resize(); requestAnimationFrame(frame);
-})();
-(function(){
+  <div class="hero">
+    <div class="left">
+      <canvas id="wordmark" aria-label="WINGMAN"></canvas>
+      <p class="eyebrow">Your Network Assistant</p>
+      <h1><span class="l1">For your desktop</span><span class="l2">and <span class="grad">your pocket</span>.</span></h1>
+
+      <div class="cards" id="cards">
+        <div class="card" id="card-windows" data-plat="windows" style="order:1">
+          <span class="ribbon">For your device</span>
+          <div class="icon">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><g fill="var(--accent-2)">
+              <rect x="3" y="4" width="8" height="7" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/>
+              <rect x="3" y="13" width="8" height="7" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/>
+            </g></svg>
+          </div>
+          <div class="cbody">
+            <h3>Wingman for Windows</h3>
+            <p>Signed installer · auto-updates</p>
+          </div>
+          <div class="go"><a class="btn primary" id="winBtn" href="#" download>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l4-4m-4 4l-4-4"/><path d="M5 21h14"/></svg>
+            <span id="winBtnText">Download</span></a></div>
+        </div>
+
+        <div class="card" id="card-handheld" data-plat="handheld" style="order:2">
+          <span class="ribbon">For your device</span>
+          <div class="icon">
+            <svg class="pt35" viewBox="0 0 28 36" aria-hidden="true">
+              <rect class="body" x="3" y="1.2" width="22" height="33.6" rx="4"/>
+              <rect class="screen" x="6" y="4" width="16" height="12" rx="1.6"/>
+              <g class="keys" data-x="6" data-y="18.4" data-w="16" data-h="13.6" data-cols="6" data-rows="4"></g>
+            </svg>
+          </div>
+          <div class="cbody">
+            <h3>WingmanOne <span class="tagnew">New</span></h3>
+            <p>Waveshare PocketTerm35 · Raspberry Pi image</p>
+          </div>
+          <div class="go"><a class="btn ghost" id="oneBtn" href="#build">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l4-4m-4 4l-4-4"/><path d="M5 21h14"/></svg>
+            <span id="oneBtnText">Download</span></a></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stage" aria-label="WingmanOne on the Waveshare PocketTerm35">
+      <svg class="device" viewBox="0 0 200 300" role="img" aria-label="PocketTerm35">
+        <rect class="body" x="24" y="10" width="152" height="280" rx="26"/>
+        <rect x="44" y="30" width="112" height="120" rx="9" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-dasharray="5 7" opacity=".6"/>
+        <text x="100" y="95" text-anchor="middle" font-family="var(--font-display)" font-weight="700" font-size="14" fill="var(--muted)">WingmanOne</text>
+        <g class="keys" data-x="42" data-y="166" data-w="116" data-h="108" data-cols="10" data-rows="4"></g>
+      </svg>
+    </div>
+  </div>
+
+  <div class="foot">
+    <span>© 2026 Wingman</span><a href="#">Terms</a><a href="#">Privacy</a>
+  </div>
+</div>
+
+<script>
+  // ---- Windows installer: live from the update manifest (button-only; download starts on click) ----
   var MANIFEST='https://software.launchwingman.com/latest.json';
-  var statusEl=document.getElementById('status'), dl=document.getElementById('dl'), verEl=document.getElementById('ver');
-  fetch(MANIFEST,{cache:'no-store'}).then(function(r){return r.json();}).then(function(m){
-    if(m && m.installerUrl){
-      dl.href=m.installerUrl; dl.style.display='inline-block'; statusEl.style.display='';
-      verEl.textContent='Latest version '+(m.version||'')+(m.date?' · '+m.date:'');
-      statusEl.textContent='Click the button below to download Wingman for Windows.';
-      // BUTTON-ONLY BY DESIGN: the download must start ONLY when the visitor clicks the button — NEVER automatically.
-      // Do NOT re-add an auto-navigate / setTimeout(window.location.href=...) here; simply visiting the page must not
-      // trigger a download. The <a id="dl" download href=installerUrl> button (set above) is the only download path.
-    } else { statusEl.textContent='Wingman is coming soon.'; }
-  }).catch(function(){ statusEl.textContent='Could not reach the download server — please try again shortly.'; });
-})();
+  var WIN_FALLBACK='https://github.com/wifi-consultant/wingman-downloads/releases/download/v1.00686.092826/Wingman-Setup-1.00686.092826.exe';
+  (function(){
+    var b=document.getElementById('winBtn'); b.href=WIN_FALLBACK;
+    fetch(MANIFEST,{cache:'no-store'}).then(function(r){return r.json();}).then(function(m){
+      if(m&&m.installerUrl) b.href=m.installerUrl;
+    }).catch(function(){});
+  })();
+
+  // ---- tetris W (option D) shared by the badge, favicon, and wordmark ----
+  var W_D=['10001','10101','10101','11011','10001'];
+  var PAL=['#3b6bff','#5468ff','#6d5efc','#7c3aed','#8b5cf6','#22c1e6','#3fd07a'];
+  function tetrisWsvg(bmp,cell,pad){
+    pad=pad||0; var g=Math.max(0.4,cell*0.1), ci=0, s='', dim=(5*cell+2*pad).toFixed(2);
+    for(var r=0;r<5;r++)for(var c=0;c<5;c++){ if(bmp[r].charAt(c)==='1'){
+      var x=pad+c*cell,y=pad+r*cell,col=PAL[(ci++)%PAL.length],bh=Math.max(0.8,cell*0.17),iw=cell-2*g,rx=Math.max(0.4,cell*0.16);
+      s+='<rect x="'+(x+g).toFixed(2)+'" y="'+(y+g).toFixed(2)+'" width="'+iw.toFixed(2)+'" height="'+iw.toFixed(2)+'" rx="'+rx.toFixed(2)+'" fill="'+col+'"/>';
+      s+='<rect x="'+(x+g).toFixed(2)+'" y="'+(y+g).toFixed(2)+'" width="'+iw.toFixed(2)+'" height="'+bh.toFixed(2)+'" fill="rgba(255,255,255,.34)"/>';
+      s+='<rect x="'+(x+g).toFixed(2)+'" y="'+(y+cell-g-bh).toFixed(2)+'" width="'+iw.toFixed(2)+'" height="'+bh.toFixed(2)+'" fill="rgba(0,0,0,.22)"/>';
+    }}
+    return '<svg xmlns="http://www.w3.org/2000/svg" width="'+dim+'" height="'+dim+'" viewBox="0 0 '+dim+' '+dim+'">'+s+'</svg>';
+  }
+  // badge
+  document.getElementById('wmark').innerHTML=tetrisWsvg(W_D,4,0);
+  // favicon (W blocks on transparent, works on any tab)
+  (function(){
+    var svg=tetrisWsvg(W_D,6,2);
+    var link=document.createElement('link'); link.rel='icon';
+    link.href='data:image/svg+xml,'+encodeURIComponent(svg);
+    document.head.appendChild(link);
+  })();
+
+  // ---- falling tetris WINGMAN wordmark (W is option D) ----
+  (function(){
+    var FONT={W:W_D,I:['11111','00100','00100','00100','11111'],
+      N:['10001','11001','10101','10011','10001'],G:['01110','10000','10011','10001','01110'],
+      M:['10001','11011','10101','10001','10001'],A:['01110','10001','11111','10001','10001']};
+    var WORD='WINGMAN';
+    var cv=document.getElementById('wordmark'), ctx=cv.getContext('2d');
+    var blocks=[], cell=0, W=0, H=0, state='form', holdUntil=0, raf=0;
+    var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function layout(){
+      var glyphs=WORD.split('').map(function(c){return FONT[c];});
+      var cols=0; glyphs.forEach(function(g){cols+=g[0].length+1;}); cols-=1;
+      var cssW=Math.min(cv.parentElement.clientWidth,440);
+      cell=Math.max(5,Math.floor(cssW/(cols+0.5)));
+      W=cols*cell; H=5*cell; var dpr=window.devicePixelRatio||1;
+      cv.style.width=W+'px'; cv.style.height=H+'px'; cv.width=Math.floor(W*dpr); cv.height=Math.floor(H*dpr);
+      ctx.setTransform(dpr,0,0,dpr,0,0);
+      blocks=[]; var cx=0, ci=0;
+      glyphs.forEach(function(g){ var gw=g[0].length;
+        for(var r=0;r<5;r++)for(var c=0;c<gw;c++){ if(g[r].charAt(c)==='1'){
+          blocks.push({tx:(cx+c)*cell, ty:r*cell, x:(cx+c)*cell, y:0, vy:0, placed:false, color:PAL[(ci++)%PAL.length]});
+        }}
+        cx+=gw+1;
+      });
+    }
+    function resetFall(){ for(var i=0;i<blocks.length;i++){ blocks[i].y=-cell-Math.random()*H*1.4; blocks[i].vy=0; blocks[i].placed=false; } }
+    function block(x,y,s,color){
+      var g=Math.max(1,s*0.08);
+      ctx.fillStyle=color; ctx.fillRect(x+g,y+g,s-2*g,s-2*g);
+      var bh=Math.max(2,s*0.16);
+      ctx.fillStyle='rgba(255,255,255,0.30)'; ctx.fillRect(x+g,y+g,s-2*g,bh);
+      ctx.fillStyle='rgba(0,0,0,0.26)'; ctx.fillRect(x+g,y+s-g-bh,s-2*g,bh);
+    }
+    function frame(){
+      ctx.clearRect(0,0,W,H);
+      var g=Math.max(0.12,cell*0.05), vmax=Math.max(2,cell*0.6), all=true, i, b;
+      for(i=0;i<blocks.length;i++){ b=blocks[i];
+        if(state==='form'){ if(!b.placed){ b.vy+=g; if(b.vy>vmax)b.vy=vmax; b.y+=b.vy; if(b.y>=b.ty){b.y=b.ty;b.vy=0;b.placed=true;} else all=false; } }
+        else if(state==='clear'){ b.vy+=g; if(b.vy>vmax*1.7)b.vy=vmax*1.7; b.y+=b.vy; }
+        block(b.x,b.y,cell,b.color);
+      }
+      var now=performance.now();
+      if(state==='form'&&all){ state='hold'; holdUntil=now+3800; }
+      else if(state==='hold'&&now>holdUntil){ state='clear'; }
+      else if(state==='clear'){ var gone=true; for(i=0;i<blocks.length;i++){ if(blocks[i].y<H+cell){gone=false;break;} } if(gone){ resetFall(); state='form'; } }
+      raf=requestAnimationFrame(frame);
+    }
+    function drawStatic(){ ctx.clearRect(0,0,W,H); for(var i=0;i<blocks.length;i++) block(blocks[i].x,blocks[i].ty,cell,blocks[i].color); }
+    function start(){ layout(); cancelAnimationFrame(raf); if(reduce){ drawStatic(); return; } resetFall(); state='form'; frame(); }
+    start();
+    var rt; window.addEventListener('resize',function(){ clearTimeout(rt); rt=setTimeout(start,150); });
+  })();
+
+  // ---- PocketTerm35 keyboards ----
+  (function(){
+    var NS='http://www.w3.org/2000/svg';
+    document.querySelectorAll('.keys').forEach(function(g){
+      var x=+g.dataset.x,y=+g.dataset.y,w=+g.dataset.w,h=+g.dataset.h,cols=+g.dataset.cols,rows=+g.dataset.rows;
+      var gap=Math.min(w,h)*0.09, kw=(w-(cols-1)*gap)/cols, kh=(h-(rows-1)*gap)/rows, rx=Math.min(kw,kh)*0.3;
+      for(var r=0;r<rows;r++)for(var c=0;c<cols;c++){
+        var rect=document.createElementNS(NS,'rect');
+        rect.setAttribute('x',(x+c*(kw+gap)).toFixed(2)); rect.setAttribute('y',(y+r*(kh+gap)).toFixed(2));
+        rect.setAttribute('width',kw.toFixed(2)); rect.setAttribute('height',kh.toFixed(2)); rect.setAttribute('rx',rx.toFixed(2));
+        g.appendChild(rect);
+      }
+    });
+  })();
+
+  // ---- platform detection → highlight the matching card ----
+  function detect(){
+    var ua=(navigator.userAgent||''), uad=navigator.userAgentData,
+        p=((uad&&uad.platform)||navigator.platform||'').toLowerCase(), s=(ua+' '+p).toLowerCase();
+    if(/win/.test(s)) return 'windows';
+    if(/raspberry|raspbian/.test(s)) return 'handheld';
+    if(/linux/.test(s)&&/(arm|aarch64)/.test(s)) return 'handheld';
+    if(/iphone|ipad|ipod|android/.test(s)) return 'other';
+    if(/mac/.test(s)) return 'mac';
+    if(/linux|cros/.test(s)) return 'linux';
+    return 'other';
+  }
+  (function(){
+    var cWin=document.getElementById('card-windows'), cOne=document.getElementById('card-handheld');
+    var plat=detect(), rec = plat==='windows' ? 'windows' : (plat==='handheld'||plat==='linux') ? 'handheld' : null;
+    cWin.classList.toggle('rec', rec==='windows'); cOne.classList.toggle('rec', rec==='handheld');
+    cWin.style.order = rec==='handheld' ? 2 : 1; cOne.style.order = rec==='handheld' ? 1 : 2;
+  })();
+
+  // WingmanOne image not published yet
+  document.getElementById('oneBtn').addEventListener('click',function(e){
+    e.preventDefault(); document.getElementById('oneBtnText').textContent='Coming soon';
+  });
 </script>
 </body>
 </html>
