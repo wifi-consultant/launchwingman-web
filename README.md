@@ -11,6 +11,14 @@ is to let a visitor download the latest **Wingman for Windows** installer, the
 2. It shows the latest version + date and enables the **"Download Wingman for Windows here"** button, whose href is
    the manifest's `installerUrl` (the signed `.exe` hosted on the public `wifi-consultant/wingman-downloads` repo).
 
+## Card icons = the family marks (2026-11-09)
+The three download cards draw the real product marks with the page's own W generator (`wBlocks` / `tileMark` /
+`oneMark` in `index.html`): **Wingman** = the app icon (white rounded tile, the tetris W); **Wingman Eagleview** =
+the same tile and W in its cool-green palette with the warm block above the W's centre as a map pin; **WingmanOne**
+= the W inside the handheld outline with the word "One". Same `W_D` bitmap and block style as the badge, favicon and
+wordmark; the Wingman app icon (`wingman` repo `scripts/gen-icon.cjs`) and Eagleview's (`eagleview` repo
+`tools/make_icons.py`) use the same tile numbers (5.5 % margin, 26 % radius, `#e7e5f1` border, W at 60 %).
+
 ## Wingman Eagleview card (added 2026-11-09)
 The third card reads Eagleview's OWN manifest, **https://software.launchwingman.com/eagleview/latest.json**
 (the root `latest.json` is the Windows Wingman app's; Wingman One will get its own folder), and sets the

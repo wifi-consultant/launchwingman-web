@@ -51,6 +51,7 @@
   .card.rec .ribbon{display:inline-block}
   .icon{width:52px;height:52px;flex:0 0 auto;border-radius:13px;display:grid;place-items:center;background:var(--surface-2)}
   .icon svg{height:34px;width:auto}
+  .icon.mark svg{height:44px;width:44px}
   .cbody{min-width:0;flex:1}
   .cbody h3{font-family:var(--font-display);font-weight:700;font-size:15.5px;margin:0 0 3px;
             display:flex;align-items:center;gap:8px;flex-wrap:wrap}
@@ -100,12 +101,7 @@
       <div class="cards" id="cards">
         <div class="card" id="card-windows" data-plat="windows" style="order:1">
           <span class="ribbon">For your device</span>
-          <div class="icon">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><g fill="var(--accent-2)">
-              <rect x="3" y="4" width="8" height="7" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/>
-              <rect x="3" y="13" width="8" height="7" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/>
-            </g></svg>
-          </div>
+          <div class="icon mark" data-mark="wingman" aria-hidden="true"></div>
           <div class="cbody">
             <h3>Wingman for Windows</h3>
             <p>Signed installer · auto-updates</p>
@@ -117,13 +113,7 @@
 
         <div class="card" id="card-handheld" data-plat="handheld" style="order:2">
           <span class="ribbon">For your device</span>
-          <div class="icon">
-            <svg class="pt35" viewBox="0 0 28 36" aria-hidden="true">
-              <rect class="body" x="3" y="1.2" width="22" height="33.6" rx="4"/>
-              <rect class="screen" x="6" y="4" width="16" height="12" rx="1.6"/>
-              <g class="keys" data-x="6" data-y="18.4" data-w="16" data-h="13.6" data-cols="6" data-rows="4"></g>
-            </svg>
-          </div>
+          <div class="icon mark" data-mark="one" aria-hidden="true"></div>
           <div class="cbody">
             <h3>WingmanOne</h3>
             <p>Waveshare PocketTerm35 · Raspberry Pi image</p>
@@ -134,13 +124,7 @@
         </div>
 
         <div class="card" id="card-eagleview" data-plat="windows" style="order:3">
-          <div class="icon">
-            <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="var(--accent-2)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="3" y="3" width="18" height="18" rx="2"/>
-              <path d="M3 10h8M11 3v8M11 10v11M11 15h10"/>
-              <circle cx="16.5" cy="7.5" r="1.6" fill="var(--accent-2)" stroke="none"/>
-            </svg>
-          </div>
+          <div class="icon mark" data-mark="eagleview" aria-hidden="true"></div>
           <div class="cbody">
             <h3>Wingman Eagleview</h3>
             <p>Venue-plan object plotter · auto-updates</p>
@@ -204,6 +188,38 @@
   }
   // badge
   document.getElementById('wmark').innerHTML=tetrisWsvg(W_D,4,0);
+  // ---- the family marks on the download cards (2026-11-09): the Wingman app icon's white tile + W; Eagleview = same
+  //      tile and W in its cool-green palette with the warm block above the centre as a map pin; WingmanOne = the W
+  //      in the handheld outline with the word One. Same W_D / block style as the badge, favicon and wordmark.
+  var PAL_EAGLE=['#0284c7','#0ea5e9','#06b6d4','#14b8a6','#10b981','#16a34a','#22c55e'], EAGLE_MARK='#f97316';
+  function wBlocks(size,pal,marker){
+    var cell=size/5,g=cell*0.1,bh=cell*0.17,rx=cell*0.16,ci=0,s='',pin=null;
+    for(var r=0;r<5;r++)for(var c=0;c<5;c++){ if(W_D[r].charAt(c)!=='1') continue;
+      var x=c*cell+g,y=r*cell+g,w=cell-2*g,col=pal[(ci++)%pal.length];
+      if(marker&&r===2&&c===2){ pin=[x+w/2,y+w/2,w/2,cell]; continue; }
+      s+='<rect x="'+x.toFixed(2)+'" y="'+y.toFixed(2)+'" width="'+w.toFixed(2)+'" height="'+w.toFixed(2)+'" rx="'+rx.toFixed(2)+'" fill="'+col+'"/>';
+      s+='<rect x="'+x.toFixed(2)+'" y="'+y.toFixed(2)+'" width="'+w.toFixed(2)+'" height="'+bh.toFixed(2)+'" fill="rgba(255,255,255,.34)"/>';
+      s+='<rect x="'+x.toFixed(2)+'" y="'+(y+w-bh).toFixed(2)+'" width="'+w.toFixed(2)+'" height="'+bh.toFixed(2)+'" fill="rgba(0,0,0,.22)"/>'; }
+    if(pin){ var cx=pin[0],cy=pin[1],R=pin[2],cl=pin[3];
+      s+='<path d="M'+(cx-R*0.92)+' '+(cy+R*0.38)+' L'+cx+' '+(cy+cl*0.92)+' L'+(cx+R*0.92)+' '+(cy+R*0.38)+' Z" fill="'+EAGLE_MARK+'"/>';
+      s+='<circle cx="'+cx+'" cy="'+cy+'" r="'+R+'" fill="'+EAGLE_MARK+'"/><circle cx="'+cx+'" cy="'+(cy-R*0.18)+'" r="'+(R*0.55)+'" fill="rgba(255,255,255,.34)"/><circle cx="'+cx+'" cy="'+cy+'" r="'+(R*0.3)+'" fill="#fff"/>'; }
+    return s;
+  }
+  function tileMark(size,pal,marker){
+    var m=size*0.055,sq=size-2*m,rad=size*0.26,pad=size*0.2;
+    return '<svg width="'+size+'" height="'+size+'" viewBox="0 0 '+size+' '+size+'" xmlns="http://www.w3.org/2000/svg">'
+      +'<rect x="'+m+'" y="'+m+'" width="'+sq+'" height="'+sq+'" rx="'+rad+'" fill="#fff" stroke="#e7e5f1" stroke-width="'+Math.max(1,size*0.012)+'"/>'
+      +'<g transform="translate('+pad+' '+pad+')">'+wBlocks(size-2*pad,pal,marker)+'</g></svg>';
+  }
+  function oneMark(size){
+    var fw=size*0.78,fx=(size-fw)/2,rr=size*0.16,ws=size*0.5,wx=(size-ws)/2,wy=size*0.12;
+    return '<svg width="'+size+'" height="'+size+'" viewBox="0 0 '+size+' '+size+'" xmlns="http://www.w3.org/2000/svg">'
+      +'<rect x="'+fx+'" y="0.5" width="'+fw+'" height="'+(size-1)+'" rx="'+rr+'" fill="#fff" stroke="#7c3aed" stroke-width="'+Math.max(0.8,size*0.05)+'"/>'
+      +'<g transform="translate('+wx+' '+wy+')">'+wBlocks(ws,PAL,false)+'</g>'
+      +'<text x="'+(size/2)+'" y="'+(size*0.86)+'" text-anchor="middle" font-family="Sora, Manrope, Segoe UI, system-ui, sans-serif" font-weight="700" font-size="'+(size*0.21)+'" fill="#7c3aed">One</text></svg>';
+  }
+  document.querySelectorAll('.mark').forEach(function(el){ var k=el.getAttribute('data-mark');
+    el.innerHTML = k==='one' ? oneMark(44) : tileMark(44, k==='eagleview'?PAL_EAGLE:PAL, k==='eagleview'); });
   // favicon (W blocks on transparent, works on any tab)
   (function(){
     var svg=tetrisWsvg(W_D,6,2);
