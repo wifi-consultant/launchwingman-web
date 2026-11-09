@@ -4,10 +4,10 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>Wingman — Your Network Assistant</title>
-<meta name="description" content="Download Wingman — the AI network assistant. For Windows, and for the WingmanOne handheld on the Waveshare PocketTerm35." />
+<meta name="description" content="Download Wingman — the AI network assistant. For Windows, for the WingmanOne handheld on the Waveshare PocketTerm35, and Wingman Eagleview, the venue-plan object plotter for Windows." />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Manrope:wght@400;500;600;700&display=swap" />
 <style>
-  /* Layout: split hero — LEFT = animated tetris wordmark + short headline + two download cards; RIGHT = PocketTerm35. White, brand purple. */
+  /* Layout: split hero — LEFT = animated tetris wordmark + short headline + three download cards; RIGHT = PocketTerm35. White, brand purple. */
   :root{
     --bg:#f7f7fb; --surface:#ffffff; --surface-2:#f3f2f9; --border:#e9e7f1;
     --ink:#161522; --muted:#6b687e; --faint:#a3a1b4;
@@ -82,6 +82,7 @@
   @media (prefers-reduced-motion:no-preference){
     .card{animation:rise .5s cubic-bezier(.2,.7,.2,1) both}
     .card:nth-child(2){animation-delay:.06s}
+    .card:nth-child(3){animation-delay:.12s}
   }
   @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 </style>
@@ -133,6 +134,23 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l4-4m-4 4l-4-4"/><path d="M5 21h14"/></svg>
             <span id="oneBtnText">Download</span></a></div>
         </div>
+
+        <div class="card" id="card-eagleview" data-plat="windows" style="order:3">
+          <div class="icon">
+            <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="var(--accent-2)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2"/>
+              <path d="M3 10h8M11 3v8M11 10v11M11 15h10"/>
+              <circle cx="16.5" cy="7.5" r="1.6" fill="var(--accent-2)" stroke="none"/>
+            </svg>
+          </div>
+          <div class="cbody">
+            <h3>Wingman Eagleview <span class="tagnew">New</span></h3>
+            <p>Venue-plan object plotter for Windows · auto-updates</p>
+          </div>
+          <div class="go"><a class="btn ghost" id="eagBtn" href="#" download>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l4-4m-4 4l-4-4"/><path d="M5 21h14"/></svg>
+            <span id="eagBtnText">Download</span></a></div>
+        </div>
       </div>
     </div>
 
@@ -158,6 +176,17 @@
   (function(){
     var b=document.getElementById('winBtn'); b.href=WIN_FALLBACK;
     fetch(MANIFEST,{cache:'no-store'}).then(function(r){return r.json();}).then(function(m){
+      if(m&&m.installerUrl) b.href=m.installerUrl;
+    }).catch(function(){});
+  })();
+
+  // ---- Wingman Eagleview installer: live from ITS manifest (eagleview/latest.json; the root one is Wingman's).
+  //      Button-only as well: the download starts on click, never on load.
+  var EAG_MANIFEST='https://software.launchwingman.com/eagleview/latest.json';
+  var EAG_FALLBACK='https://github.com/wifi-consultant/eagleview-downloads/releases/download/v4.54/Eagleview-Setup-4.54.exe';
+  (function(){
+    var b=document.getElementById('eagBtn'); b.href=EAG_FALLBACK;
+    fetch(EAG_MANIFEST,{cache:'no-store'}).then(function(r){return r.json();}).then(function(m){
       if(m&&m.installerUrl) b.href=m.installerUrl;
     }).catch(function(){});
   })();
@@ -270,6 +299,7 @@
     var plat=detect(), rec = plat==='windows' ? 'windows' : (plat==='handheld'||plat==='linux') ? 'handheld' : null;
     cWin.classList.toggle('rec', rec==='windows'); cOne.classList.toggle('rec', rec==='handheld');
     cWin.style.order = rec==='handheld' ? 2 : 1; cOne.style.order = rec==='handheld' ? 1 : 2;
+    document.getElementById('card-eagleview').style.order = 3;   // always third, never the 'For your device' pick
   })();
 
   // WingmanOne image not published yet

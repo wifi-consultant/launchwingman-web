@@ -1,7 +1,8 @@
 # launchwingman.com — Wingman download landing page
 
 The public site at **https://launchwingman.com**, served by **GitHub Pages** (Cloudflare-fronted). Its only job
-is to let a visitor download the latest **Wingman for Windows** installer.
+is to let a visitor download the latest **Wingman for Windows** installer, the
+**WingmanOne** image (when published) and the **Wingman Eagleview** installer.
 
 ## How it works
 1. On load, `index.html` fetches the update manifest **https://software.launchwingman.com/latest.json** — the same
@@ -9,6 +10,14 @@ is to let a visitor download the latest **Wingman for Windows** installer.
    source of truth).
 2. It shows the latest version + date and enables the **"Download Wingman for Windows here"** button, whose href is
    the manifest's `installerUrl` (the signed `.exe` hosted on the public `wifi-consultant/wingman-downloads` repo).
+
+## Wingman Eagleview card (added 2026-11-09)
+The third card reads Eagleview's OWN manifest, **https://software.launchwingman.com/eagleview/latest.json**
+(the root `latest.json` is the Windows Wingman app's; Wingman One will get its own folder), and sets the
+button's href to its `installerUrl` (the `Eagleview-Setup-<version>.exe` Release asset on the public
+`wifi-consultant/eagleview-downloads` repo). It is never the "For your device" pick and always sits third.
+Same button-only rule as below. The card uses this page's styling only; the Eagleview app itself carries
+no Wingman branding yet.
 
 ## ⛔ BUTTON-ONLY — do NOT auto-download
 The download must start **only when the visitor clicks the button — NEVER automatically on page load.** Do **not**
